@@ -31,9 +31,7 @@ def fetch_url():
         config['images'] = images
 
 # Additions to GUI layout:
-
 # New function and feature definitions
-
 
 def fetch_title():
     url = _url.get()
