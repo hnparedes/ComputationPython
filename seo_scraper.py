@@ -1,4 +1,4 @@
-# gui_scrape.py
+# seo_scraper.py
 from tkinter import *
 from tkinter import ttk, filedialog, messagebox
 import base64
@@ -29,6 +29,39 @@ def fetch_url():
         else:
             sb('No images found')
         config['images'] = images
+
+# Additions to GUI layout:
+
+# New function and feature definitions
+
+
+def fetch_title():
+    url = _url.get()
+    try:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        title = soup.title.string if soup.title else "No title found"
+        sb(f'Title: {title}')
+    except requests.RequestException as err:
+        sb(f'Error fetching title: {str(err)}')
+
+
+def fetch_links():
+    url = _url.get()
+    base_url = url.split('/')[2]  # Extract the domain
+    try:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        external_links = []
+        for link in soup.find_all('a', href=True):
+            href = link['href']
+            if href.startswith('http') and base_url not in href:
+                external_links.append(href)
+
+        _images.set(tuple(external_links))  # Display links in the content field
+        sb(f'External Links found: {len(external_links)}')
+    except requests.RequestException as err:
+        sb(f'Error fetching links: {str(err)}')
 
 
 def fetch_images(soup, base_url):
@@ -90,7 +123,7 @@ def alert(msg):
 
 if __name__ == "__main__":  # execute logic if run directly
     _root = Tk()  # instantiate instance of Tk class
-    _root.title('Scrape app')
+    _root.title('Hugos App')
     _mainframe = ttk.Frame(_root, padding='5 5 5 5 ')  # root is parent of frame
     _mainframe.grid(row=0, column=0, sticky=("E", "W", "N", "S"))  # placed on first row,col of parent
     # frame can extend itself in all cardinal directions
@@ -107,9 +140,17 @@ if __name__ == "__main__":  # execute logic if run directly
     _url_entry.grid(row=0, column=0, sticky=(E, W, S, N), padx=5)
     # grid mgr places object at position
     _fetch_btn = ttk.Button(
-        _url_frame, text='Fetch info', command=fetch_url)  # create button
+        _url_frame, text='Fetch img', command=fetch_url)  # create button
     # fetch_url() is callback for button press
     _fetch_btn.grid(row=0, column=1, sticky=W, padx=5)
+
+    _fetch_title_btn = ttk.Button(
+        _url_frame, text='Fetch title', command=fetch_title)
+    _fetch_title_btn.grid(row=0, column=2, sticky=W, padx=5)
+
+    _fetch_link_btn = ttk.Button(
+        _url_frame, text='Fetch links', command=fetch_links)
+    _fetch_link_btn.grid(row=0, column=3, sticky=W, padx=5)
 
     # img_frame contains Lisbox and Radio Frame
     _img_frame = ttk.LabelFrame(

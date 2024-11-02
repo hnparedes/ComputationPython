@@ -24,9 +24,9 @@ def fetch_images(soup, base_url):
     images = []
     for img in soup.findAll('img'):
         src = img.get('src')
-        print('here ',src)
+        print('here ', src)
         img_url = f'{base_url}/{src}'
-        print('next ',img_url)
+        print('next ', img_url)
         name = img_url.split('/')[-1]
         images.append(dict(name=name, url=img_url))
         print(images)
