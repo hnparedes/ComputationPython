@@ -33,6 +33,7 @@ def fetch_url():
 # Additions to GUI layout:
 # New function and feature definitions
 
+
 def fetch_title():
     url = _url.get()
     try:
